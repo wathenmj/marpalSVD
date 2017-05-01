@@ -1,0 +1,13 @@
+Package: marpalSVD
+Type: Package
+Title: Singular Value Decomposition for Higher Order Contingency Tables
+Version: 0.1.0
+Authors@R: person("Michael", "Wathen", email = "michael_wathen@live.com", role = c("aut", "cre"))
+Description: Converts contingency tables (higher dimensionality, ie., beyond 2 by 2) to normalized
+             probability tables and runs singular value decomposition as means of assessing the degree
+             of independence of categorical data. Especially suited for genotype data.
+License: What license is it under?
+LazyData: TRUE
+Imports: dplyr,
+    data.table
+RoxygenNote: 6.0.1
