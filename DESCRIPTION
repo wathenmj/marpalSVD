@@ -7,7 +7,4 @@ Description: Converts contingency tables (higher dimensionality, ie., beyond 2 b
              probability tables and runs singular value decomposition as means of assessing the degree
              of independence of categorical data. Especially suited for genotype data.
 License: What license is it under?
-LazyData: TRUE
-Imports: dplyr,
-    data.table
 RoxygenNote: 6.0.1
