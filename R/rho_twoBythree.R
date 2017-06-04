@@ -1,4 +1,4 @@
-Rho_alt <- function(x,y){
+rho_twoBythree <- function(x,y){
   temp <- as.matrix(table(x,y))
   tbl <-as.matrix(prop.table(temp))
   col_num <- dim(tbl)[2]
@@ -9,7 +9,7 @@ Rho_alt <- function(x,y){
   else if(col_num == 2){
     p11hat <-tbl[1,1]; p12hat <- tbl[1,2]
     p21hat <-tbl[2,1]; p22hat <- tbl[2,2]
-    
+
     p1p <- sum(tbl[1, ]); p2p <- sum(tbl[2, ])
     pp1 <- sum(tbl[, 1]); pp2 <- sum(tbl[,2 ])
     rho <- p11hat^2/(p1p*pp1) + p12hat^2/(p1p*pp2) +
