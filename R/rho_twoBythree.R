@@ -36,3 +36,30 @@ rho_twoBythree <- function(x,y){
     return(rho)
   }
 }
+
+# Quantile 
+quantile(DRM.CH, p= seq(0,1,0.1),na.rm=TRUE)
+# remove unnecessary column
+fms_1=fms[,- c(1,3,53,227:235,237:347)] 
+attach(fms_1)
+#if the change is less or equal to 0 then 0 otherwise 1
+x<-ifelse(DRM.CH <= 0.0,0,1)
+
+# remove the x
+fms_1<-fms_1[,-c(224)]
+
+
+# loop for all the snips
+rho<-rep(0,223)
+for (i in 1: 223)
+  y<- fms_1[ , i]
+  rho[i]<-rho_twoBythree(x,y)
+  
+
+snp<-names(fms_1)
+#snips name with rho value
+out<-data.frame(snp,rho)   
+  
+
+
+
