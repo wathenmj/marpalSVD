@@ -48,15 +48,15 @@ HWE.chisq(snp1)
 #   for use when expected cell counts fall below below 5
 HWE.exact(snp1)
 
-snp <- rep(0,223)
-hwe_pvalue <- rep(0,223)
-expect_count <- rep(0,223)
-exact_pvalue <- rep(0,223)
+snp <- rep(0,207)
+hwe_pvalue <- rep(0,207)
+expect_count <- rep(0,207)
+exact_pvalue <- rep(0,207)
 
 fms_subset_1[,28]# Levels: AA GA GG Und
 fms_subset_1[,58]# Levels: GG
 fms_subset_1[ ,59] #Levels: CC
-for(i in 196:223){
+for(i in 1:207){
   snp <- genotype(fms_subset_1[,i], sep = "")
   k <- HWE.chisq(snp)
   k$p.value -> hwe_pvalue[i]
