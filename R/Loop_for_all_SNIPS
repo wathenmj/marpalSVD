@@ -1,0 +1,35 @@
+# Quantile 
+quantile(DRM.CH, p= seq(0,1,0.1),na.rm=TRUE)
+# remove unnecessary column
+fms_1=fms[,- c(1,3,53,227:235,237:347)] 
+attach(fms_1)
+#if the change is less or equal to 0 then 0 otherwise 1
+x<-ifelse(DRM.CH <= 0.0,0,1)
+table(DRM.CH)
+#new data frame
+new_data<- data.frame(x,fms_1[ ,1:223] )
+dat_y<-new_data[ ,c(2:223)]
+dat_x<-new_data[ ,c(1)]
+
+# loop for all snips
+rho <- c(rep(0,222))
+for(i in 1:222){
+  y <- dat_y[,i]
+  rho[[i]] = rho_twoBythree(x,y)
+}
+rho
+# Histogram of the rho values
+hist(rho, 
+     main="Rho 2*3", 
+     xlab="Rho", 
+     border="blue", 
+     col="green",
+     xlim=c(-1,0.4),
+     las=1, 
+     breaks=5)
+  
+
+#snips name with rho value
+snp<-names(dat_y)
+out<-data.frame(snp,rho) 
+  
