@@ -15,3 +15,14 @@ for(i in 1:111){
   rho[[i]] = rho_twoBythree(x,y)
 }
 rho
+
+
+# Histogram of the rho values
+hist(rho, 
+     main="Rho 2*3", 
+     xlab="Rho", 
+     border="blue", 
+     col="green",
+     xlim=c(-0.5,0.5),
+     las=1, 
+     breaks=1)
