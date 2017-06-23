@@ -1,9 +1,7 @@
-p11<- 1/6
-p12 <- 1/6
-p13 <- 1/6
-p21 <- 1/6
-p22 <- 1/6
-p23 <- 1/6
+temp <- as.matrix(table(x,y))
+tbl <-as.matrix(prop.table(temp))
+p11 <-tbl[1,1]; p12 <- tbl[1,2]; p13 <- tbl[1,3]
+p21 <-tbl[2,1]; p22 <- tbl[2,2]; p23 <- tbl[2,3]
 V1 <- p11*(1-p11)
 V2 <- p12*(1-p12)
 V3 <- p13*(1-p13)
