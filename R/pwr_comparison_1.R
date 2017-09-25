@@ -89,11 +89,18 @@ result<-replicate(100, expr = {
 row.names(result)<- c("Power_odds_ratio", "Power_Canonical")
 result_transpose<-t(result)
 
-plot(MB,PowerRho, type= "l", col= "red", main= " Power functions " ,
-     ylab= "Power", xlab= " Lambda" )
-lines(MB,PowerlnTheta,col= "blue" )
-legend("bottomright", legend= c("Power_Rho", "Power_lntheta"), col=c("red", "blue"), pch= c(16,17),)
+# Barplot of power
+dmy <- as.data.frame(result_transpose)
+dmy$diff <- dmy$Power_Canonical-dmy$Power_odds_ratio
+df_2 <- dmy[ , c(1,3)]
 
-plot(result_transpose$Power_odds_ratio)
+barplot(as.matrix(t(df_2)), col=rainbow(2),
+        xlab = "Simulation Number",
+        ylab = "Power",border=NA,
+        ylim = range(0,80))
+legend("topright",legend = c("Odds Ratio","Canonical Rho"),
+       col =rainbow(2),
+       lty = 1,pch = 20, cex = 0.75)
+mtext("Power Simulation", adj=0, line = 0.5)
 
 
