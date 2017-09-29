@@ -75,10 +75,10 @@ power_function<-function(n){
     cov_bd<- p12hat * p22hat
     cov_cd<- p21hat * p22hat
 
-    df_da<-((1/n)*p22hat*(-sqrt(population_gamma))) - (0.5*phi*((1+p11hat+p22hat)/((p11hat+p12hat)*(p11hat+p21hat))))
-    df_db<-((-1/n)*p21hat*(-sqrt(population_gamma))) + (0.5*phi*((1+p12hat-p21hat)/((p12hat+p22hat)*(p12hat+p11hat))))
-    df_dc<-((-1/n)*p12hat*(-sqrt(population_gamma))) + (0.5*phi*((1+p21hat-p12hat)/((p21hat+p11hat)*(p21hat+p22hat))))
-    df_dd<-((1/n)*p11hat*(-sqrt(population_gamma))) - (0.5*phi*((1+p22hat-p11hat)/((p22hat+p12hat)*(p22hat+p21hat))))
+    df_da<-((1/n)*p22hat*(-sqrt(population_gamma))) - (0.5*Phi*((1+p11hat+p22hat)/((p11hat+p12hat)*(p11hat+p21hat))))
+    df_db<-((-1/n)*p21hat*(-sqrt(population_gamma))) + (0.5*Phi*((1+p12hat-p21hat)/((p12hat+p22hat)*(p12hat+p11hat))))
+    df_dc<-((-1/n)*p12hat*(-sqrt(population_gamma))) + (0.5*Phi*((1+p21hat-p12hat)/((p21hat+p11hat)*(p21hat+p22hat))))
+    df_dd<-((1/n)*p11hat*(-sqrt(population_gamma))) - (0.5*Phi*((1+p22hat-p11hat)/((p22hat+p12hat)*(p22hat+p21hat))))
 
     # Asymptotic variance of Phi
     AsyVarPhi <- v_A * (df_da)^2 +  v_B * (df_db)^2 + v_C * (df_dc)^2 + v_D * (df_dd)^2 + 2 * cov_ab * (df_da) * (df_db) +
@@ -114,12 +114,14 @@ result<-replicate(100, expr = {
   Y <- power_function(1000)
   C_lnOR <- as.matrix(table(Y$count_lnOR))
   C_Rho <- as.matrix(table(Y$count_Rho))
+  C_Phi <- as.matrix(table(Y$count_Phi))
   Percent_lnOR <- (C_lnOR[2] / sum(C_lnOR[1], C_lnOR[2])) * 100
   Percent_Rho <- (C_Rho[2] / sum(C_Rho[1], C_Rho[2])) * 100
-  c(Percent_lnOR, Percent_Rho)
+  Percent_Phi <- (C_Phi[2] / sum(C_Phi[1], C_Phi[2])) * 100
+  c(Percent_lnOR, Percent_Rho,Percent_Phi)
 })
 
-row.names(result)<- c("Power_odds_ratio", "Power_Canonical")
+row.names(result)<- c("Power_odds_ratio", "Power_Canonical","Power_Phi")
 result_transpose<-t(result)
 
 # Barplot of power
