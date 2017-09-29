@@ -94,17 +94,18 @@ power_function<-function(n){
     # test statistics
     z1<-lnOR/sqrt(AsyVarOR/100)
     z2<- Rho/ sqrt(AsyVarRho/100)
-
+    z3 <- Phi/sqrt(AsyVarPhi/100) # need to check with Rao
+    count_Phi <- ifelse(abs(z3)>1.96,1,0)
     count_lnOR<-ifelse(abs(z1)>1.96,1,0)
     count_Rho<-ifelse(abs(z2)>1.96,1,0)
     # outputs in dataframe by columns
-    df <- c(p11hat, p12hat, p21hat, Rho, AsyVarRho, OddsRatio,lnOR, AsyVarOR,count_lnOR,count_Rho)
+    df <- c(p11hat, p12hat, p21hat, Rho, AsyVarRho, OddsRatio,lnOR, AsyVarOR,count_lnOR,count_Rho,Phi,AsyVarPhi,count_Phi)
     cell_counts_data=rbind(df,cell_counts_data)
 
   }# i
 
   colnames(cell_counts_data)<-c("p11hat", "p12hat", "p21hat", "Rho", "AsyVarRho", "OddsRatio","lnOR","AsyVarOR","count_lnOR",
-                     "count_Rho")
+                     "count_Rho", "Phi","AsyVarPhi","count_Phi")
   return(cell_counts_data)
 }
 
