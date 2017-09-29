@@ -1,6 +1,6 @@
-# Rao_canonical_phi
+# Phi_assymptotic_variance
 a<-0.3;b<-0.4;c<-0.2;d<-0.1
-n<-1
+
 
 MB <- rdirichlet(1, c(1,1,1,1))
 Sample<-rmultinom(1, 100, prob= c(MB[1,1], MB[1,2], MB[1,3], MB[1,4]))
@@ -9,6 +9,7 @@ Sample<-rmultinom(1, 100, prob= c(MB[1,1], MB[1,2], MB[1,3], MB[1,4]))
 # assymptotic variance of phi_hat
 
 variance_phi_hat<-function(a,b,c,d){
+  n <- a+b+c+d
   population_data<-matrix(c(a,b,c,d),nrow=2,ncol=2,byrow=T)
 
   population_gamma<-(a+b)*(a+c)*(c+d)*(b+d)
