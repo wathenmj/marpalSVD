@@ -12,11 +12,12 @@ power_function<-function(n){
   Rho<- rep(0,n);
   AsyVarRho<-rep(0,n) #canonical
   OddsRatio<-rep(0,n)
-  lnOR<-rep(0,n)
-  AsyVarOR<-rep(0,n) #odds ratio
+  lnOR<-rep(0,n) #odds ratio
+  AsyVarOR<-rep(0,n)
   count_lnOR<-rep(0,n)
   count_Rho<-rep(0,n)
-
+  AsyVarPhi <- rep(0,n) # Phi
+  count_Phi <- rep(0,n)
 
   for (i in 1:n) {
     # generating the joint distribution
@@ -58,6 +59,35 @@ power_function<-function(n){
 
     OddsRatio <- p11hat*(1-p11hat-p12hat-p21hat)/(p12hat*p21hat)
     lnOR <- log(OddsRatio)
+    ################
+    population_gamma<-(p11hat+p12hat)*(p11hat+p21hat)*(p21hat+p22hat)*(p12hat+p22hat)
+    phi<-((p11hat*p22hat) - (p12hat*p21hat)) * (-sqrt(population_gamma))
+
+    v_A<- p11hat * (1-p11hat)
+    v_B<- p12hat * (1-p12hat)
+    v_C<- p21hat * (1-p21hat)
+    v_D<- p22hat * (1-p22hat)
+    cov_ab<- p11hat * p12hat
+    cov_ac<- p11hat * p21hat
+    cov_ad<- p11hat * p22hat
+    cov_bc<- p12hat * p21hat
+    cov_bd<- p12hat * p22hat
+    cov_cd<- p21hat * p22hat
+
+    df_da<-((1/n)*p22hat*(-sqrt(population_gamma))) - (0.5*phi*((1+p11hat+p22hat)/((p11hat+p12hat)*(p11hat+p21hat))))
+    df_db<-((-1/n)*p21hat*(-sqrt(population_gamma))) + (0.5*phi*((1+p12hat-p21hat)/((p12hat+p22hat)*(p12hat+p11hat))))
+    df_dc<-((-1/n)*p12hat*(-sqrt(population_gamma))) + (0.5*phi*((1+p21hat-p12hat)/((p21hat+p11hat)*(p21hat+p22hat))))
+    df_dd<-((1/n)*p11hat*(-sqrt(population_gamma))) - (0.5*phi*((1+p22hat-p11hat)/((p22hat+p12hat)*(p22hat+p21hat))))
+
+    # Asymptotic variance of Phi
+    AsyVarPhi <- v_A * (df_da)^2 +  v_B * (df_db)^2 + v_C * (df_dc)^2 +
+      v_D * (df_dd)^2 + 2 * cov_ab * (df_da) * (df_db) +
+      2 * cov_ac * (df_da) * (df_dc) + 2 * cov_ad * (df_da) * (df_dd)+
+      2 * cov_bc * (df_db) * (df_dc) + 2 * cov_bd * (df_db) * (df_dd)+
+      2 * cov_cd * (df_dc) * (df_dd)
+
+
+    ######################
     # asymptotic variance of odds ratio Theta
     AsyVarOR <- (1/p11hat + 1/p12hat + 1/p21hat + 1/(1 - p11hat - p12hat - p21hat))
     # test statistics
