@@ -16,6 +16,7 @@ power_function<-function(n){
   AsyVarOR<-rep(0,n)
   count_lnOR<-rep(0,n)
   count_Rho<-rep(0,n)
+  Phi <- rep(0,n)
   AsyVarPhi <- rep(0,n) # Phi
   count_Phi <- rep(0,n)
 
@@ -42,8 +43,7 @@ power_function<-function(n){
     Cov23 <- -p12hat*p21hat
     U <- sqrt(p1p*p2p*pp1*pp2) # for simplification of denominator and numerator
     V <- p11hat*p2p*pp2 - p12hat*p2p*pp1 - p21hat*p1p*pp2 + (1-p11hat-p12hat-p21hat)*p1p*pp1
-    # generating canonical correlation Rho
-    Rho <- V/sqrt(U)
+
     # partial derivatives
     DUDx <- (1-p1p-pp1)*(p1p+pp1-2*p1p*pp1)
     DUDy <- pp1*(1-pp1)*(1-2*p1p)
@@ -54,14 +54,15 @@ power_function<-function(n){
     DfDx <- (1/sqrt(U))*DVDx - 0.5*U^(-1.5)*V*DUDx
     DfDy <- (1/sqrt(U))*DVDy - 0.5*U^(-1.5)*V*DUDy
     DfDz <- (1/sqrt(U))*DVDz - 0.5*U^(-1.5)*V*DUDz
-    # asymptotic variance of canonical correlation Rho
-    AsyVarRho <- Var1*DfDx^2 + Var2*DfDy^2 + Var3*DfDz^2 + 2*Cov12*DfDx*DfDy +2*Cov13*DfDx*DfDz + 2*Cov23*DfDy*DfDz
 
+    # generating canonical correlation Rho and log odds ratio
+    Rho <- V/sqrt(U)
     OddsRatio <- p11hat*(1-p11hat-p12hat-p21hat)/(p12hat*p21hat)
     lnOR <- log(OddsRatio)
+
     ################
-    population_gamma<-(p11hat+p12hat)*(p11hat+p21hat)*(p21hat+p22hat)*(p12hat+p22hat)
-    phi<-((p11hat*p22hat) - (p12hat*p21hat)) * (-sqrt(population_gamma))
+    # define phi and calculate the asymptotic variance
+    Phi<-((p11hat*p22hat) - (p12hat*p21hat)) * (-sqrt((p11hat+p12hat)*(p11hat+p21hat)*(p21hat+p22hat)*(p12hat+p22hat)))
 
     v_A<- p11hat * (1-p11hat)
     v_B<- p12hat * (1-p12hat)
@@ -80,19 +81,20 @@ power_function<-function(n){
     df_dd<-((1/n)*p11hat*(-sqrt(population_gamma))) - (0.5*phi*((1+p22hat-p11hat)/((p22hat+p12hat)*(p22hat+p21hat))))
 
     # Asymptotic variance of Phi
-    AsyVarPhi <- v_A * (df_da)^2 +  v_B * (df_db)^2 + v_C * (df_dc)^2 +
-      v_D * (df_dd)^2 + 2 * cov_ab * (df_da) * (df_db) +
-      2 * cov_ac * (df_da) * (df_dc) + 2 * cov_ad * (df_da) * (df_dd)+
-      2 * cov_bc * (df_db) * (df_dc) + 2 * cov_bd * (df_db) * (df_dd)+
+    AsyVarPhi <- v_A * (df_da)^2 +  v_B * (df_db)^2 + v_C * (df_dc)^2 + v_D * (df_dd)^2 + 2 * cov_ab * (df_da) * (df_db) +
+      2 * cov_ac * (df_da) * (df_dc) + 2 * cov_ad * (df_da) * (df_dd)+2 * cov_bc * (df_db) * (df_dc) + 2 * cov_bd * (df_db) * (df_dd)+
       2 * cov_cd * (df_dc) * (df_dd)
 
 
     ######################
+    # asymptotic variance of canonical correlation Rho
+    AsyVarRho <- Var1*DfDx^2 + Var2*DfDy^2 + Var3*DfDz^2 + 2*Cov12*DfDx*DfDy +2*Cov13*DfDx*DfDz + 2*Cov23*DfDy*DfDz
     # asymptotic variance of odds ratio Theta
     AsyVarOR <- (1/p11hat + 1/p12hat + 1/p21hat + 1/(1 - p11hat - p12hat - p21hat))
     # test statistics
     z1<-lnOR/sqrt(AsyVarOR/100)
     z2<- Rho/ sqrt(AsyVarRho/100)
+
     count_lnOR<-ifelse(abs(z1)>1.96,1,0)
     count_Rho<-ifelse(abs(z2)>1.96,1,0)
     # outputs in dataframe by columns
