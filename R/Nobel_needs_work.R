@@ -79,14 +79,14 @@ power_function<-function(n){
 
 
 
-    df_da<-((1/n)*p22hat/(sqrt(population_gamma))) - (0.5*Phi*((1+p11hat+p22hat)/((p11hat+p12hat)*(p11hat+p21hat))))
+    df_da<-((1/n)*p22hat/(sqrt(population_gamma))) - (0.5*Phi*((1+p11hat-p22hat)/((p11hat+p12hat)*(p11hat+p21hat))))
     df_db<-((-1/n)*p21hat/(sqrt(population_gamma))) + (0.5*Phi*((1+p12hat-p21hat)/((p12hat+p22hat)*(p12hat+p11hat))))
     df_dc<-((-1/n)*p12hat/(sqrt(population_gamma))) + (0.5*Phi*((1+p21hat-p12hat)/((p21hat+p11hat)*(p21hat+p22hat))))
     df_dd<-((1/n)*p11hat/(sqrt(population_gamma))) - (0.5*Phi*((1+p22hat-p11hat)/((p22hat+p12hat)*(p22hat+p21hat))))
 
     # Asymptotic variance of Phi
-    AsyVarPhi <- v_A * (df_da)^2 +  v_B * (df_db)^2 + v_C * (df_dc)^2 + v_D * (df_dd)^2 + 2 * cov_ab * (df_da) * (df_db) +
-      2 * cov_ac * (df_da) * (df_dc) + 2 * cov_ad * (df_da) * (df_dd)+2 * cov_bc * (df_db) * (df_dc) + 2 * cov_bd * (df_db) * (df_dd)+
+    AsyVarPhi <- v_A * (df_da)^2 +  v_B * (df_db)^2 + v_C * (df_dc)^2 + v_D * (df_dd)^2 - 2 * cov_ab * (df_da) * (df_db) -
+      2 * cov_ac * (df_da) * (df_dc) - 2 * cov_ad * (df_da) * (df_dd)-2 * cov_bc * (df_db) * (df_dc) - 2 * cov_bd * (df_db) * (df_dd)-
       2 * cov_cd * (df_dc) * (df_dd)
 
 
