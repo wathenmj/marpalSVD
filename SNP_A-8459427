@@ -1,0 +1,55 @@
+# SNP_A-8459427
+
+w_1 <- c(2339,471,3130,452)
+
+b_1 <- matrix(w_1,nrow = 2,ncol = 2, byrow = T)
+
+p11 <- b_1[1,1];p12 <- b_1[1,2]
+p21 <- b_1[2,1];p22 <- b_1[2,2]
+
+p1p <- sum(b_1[1, ]); p2p <- sum(b_1[2, ])
+pp1 <- sum(b_1[, 1]); pp2 <- sum(b_1[,2 ])
+# rho is verified here
+rho <- sqrt(p1p*pp1*p2p*pp2)*(
+  p11/sqrt(p1p*pp1)- p12/sqrt(p1p*pp2)- p21/sqrt(p2p*pp1) + p22/sqrt(p2p*pp2)
+  )
+
+# variance and covariance of estimates
+Var1 <- p11*(1-p11)
+Var2 <- p12*(1-p12)
+Var3 <- p21*(1-p21)
+Cov12 <- -p11*p12
+Cov13 <- -p11*p21
+Cov23 <- -p12*p21
+
+U <- sqrt(p1p*p2p*pp1*pp2) # for simplification of denominator and numerator
+V <- p11*p2p*pp2 - p12*p2p*pp1 - p21*p1p*pp2 + (1-p11-p12-p21)*p1p*pp1
+
+DUDx <- (1-p1p-pp1)*(p1p+pp1-2*p1p*pp1)
+DUDy <- pp1*(1-pp1)*(1-2*p1p)
+DUDz <- p1p*(1-p1p)*(1-2*pp1)
+DVDx <- 1-p1p-pp1
+DVDy <- -pp1
+DVDz <- -p1p
+DfDx <- (1/sqrt(U))*DVDx - 0.5*U^(-1.5)*V*DUDx
+DfDy <- (1/sqrt(U))*DVDy - 0.5*U^(-1.5)*V*DUDy
+DfDz <- (1/sqrt(U))*DVDz - 0.5*U^(-1.5)*V*DUDz
+
+Rho <- V/sqrt(U) ## ????????????????????????????
+OddsRatio <- p11*(1-p11-p12-p21)/(p12*p21)
+lnOR <- log(OddsRatio)
+
+
+AsyVarRho <- Var1*DfDx^2 + Var2*DfDy^2 + Var3*DfDz^2 + 2*Cov12*DfDx*DfDy +2*Cov13*DfDx*DfDz + 2*Cov23*DfDy*DfDz
+AsyVarOR <- (1/p11 + 1/p12 + 1/p21 + 1/(1 - p11 - p12 - p21))
+
+z1 <- lnOR/sqrt(AsyVarOR/sum(temp));z1
+LnOddsRatio_pvalue <- pnorm(z1)
+z2 <- Rho/ sqrt(AsyVarRho/sum(temp));z2
+Rho_pvalue <- pnorm(z2)
+LnOddsRatio_pvalue;Rho_pvalue
+> temp
+     [,1] [,2]
+[1,] 2339  471
+[2,] 3130  452
+fisher.test(temp)
