@@ -1,0 +1,50 @@
+# test_me_01262018
+Nobel <-function(n,n.size){
+ a <-rep(0,n); b <-rep(0,n); c <-rep(0,n)
+ d <-rep(0,n); e <- rep(0,n); f <- rep(0,n)
+  Rho <- rep(0,n)
+  var <- rep(0,n)
+  for (i in 1:n) {
+    MB <- rdirichlet(1, c(1,1,1,1,1,1))
+    Sample<-rmultinom(n, n.size, prob= c(MB[1,1], MB[1,2], MB[1,3], MB[1,4], MB[1,5],MB[1,6]))
+    a <- Sample[1,i]/n.size; b <- Sample[2,i]/n.size; c <- Sample[3,i]/n.size
+    d <- Sample[4,i]/n.size; e <- Sample[5,i]/n.size; f <- Sample[6,i]/n.size
+
+    g <- a + b + c; h <- c + d + e
+    i <- a + d; j <- b + e; k <- c + f
+
+    Rho <- a^2/((a+b+c)*(a+d)) + b^2/((a+b+c)*(b+e)) +
+      c^2/((a+b+c)*(c+f)) + d^2/((d+e+f)*(a+d)) +
+      e^2/((d+e+f)*(b+e)) + f^2/((d+e+f)*(c+f)) - 1
+
+    DA <- a/g - (1/g^2)*(a^2/i + b^2/j + c^2/k) +
+      (d/i^2)*(a/g - d/h)
+    DB <- b/g - (1/g^2)*(a^2/i + b^2/j + c^2/k) +
+      (e/j^2)*(b/g - e/h)
+    DC <- c/g - (1/g^2)*(a^2/i + b^2/j + c^2/k) +
+      (f/i^2)*(c/g - f/h)
+    DD<- d/h - (1/h^2)*(d^2/i + e^2/j + f^2/k) +
+      (a/i^2)*(d/h - a/g)
+    DE<- e/h - (1/h^2)*(d^2/i + e^2/j + f^2/k) +
+      (b/j^2)*(e/h - b/g)
+    DF<- f/h - (1/h^2)*(d^2/i + e^2/j + f^2/k) +
+
+
+      (c/i^2)*(f/h - c/g)
+
+    var <- a*(1-a)*DA^2 + b*(1-b)*DB^2 + c*(1-c)*DC^2 +
+      d*(1-d)*DD^2 + e*(1-e)*DE^2 + f*(1-f)*DF^2 - 2*a*b*DA*DB -
+      2*a*c*DA*DC - 2*a*d*DA*DD - 2*a*e*DA*DE - 2*a*f*DA*DF -
+      2*b*c*DB*DC - 2*b*d*DB*DD - 2*b*e*DB*DE - 2*b*f*DB*DF -
+      2*c*d*DC*DD - 2*c*e*DC*DE - 2*c*f*DC*DF - 2*d*e*DD*DE -
+      2*d*f*DD*DF - 2*e*f*DE*DF
+    var <- var/n
+    df <- c(a, b, c,d,e,f, Rho,var)
+    data1=rbind(df,data1)
+ }
+    colnames(data1) <- c("a", "b", "c","d","e","f", "Rho", "AsyVarRho")
+
+    return(data1)
+}
+
+y <- Nobel(100,100)
