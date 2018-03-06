@@ -1,0 +1,117 @@
+# power_comparison_phi_ln_odds
+
+
+alt_joint_distrb <- c(0.2166556, 0.4410802, 0.2019513, 0.1403129)
+#  construct prob( |z| >= 1.96 | when the alternative hypothesis is true)
+# Capital letters are reserved for the true alternative distribtuion
+A <- alt_joint_distrb[1];B <- alt_joint_distrb[2]
+C <- alt_joint_distrb[3];D <- alt_joint_distrb[4]
+
+row_1 <- A + B;row_2 <- C + D
+col_1 <- A + C;col_2 <- B + D
+
+pop_rho <-  sqrt(row_1*row_2*col_1*col_2) *
+  (A/(row_1* col_1) - B/(row_1*col_2) -  C/(row_2*col_1) + D/(row_2*col_2))
+
+pop_phi <- ((A*D)-(B*C))/sqrt(row_1*row_2*col_1*col_2)
+
+G <- (A+B)*(C+D)*(A+C)*(B+D)
+DphiA <- D*G^(-0.5) - 0.5*pop_phi*G^(-1)*(C+D)*(B+D)*(2*A+B+C)
+DphiD <-A*G^(-0.5) - 0.5*pop_phi*G^(-1)*(A+B)*(A+C)*(2*D+B+C)
+DphiB <- -C*G^(-0.5) - 0.5*pop_phi*G^(-1)*(A+C)*(C+D)*(2*B+A+D)
+DphiC <- -B*G^(-0.5) - 0.5*pop_phi*G^(-1)*(A+B)*(B+D)*(2*C+A+D)
+
+var_A <- A*(1-A)
+var_B<- B*(1-B)
+var_C <- C*(1-C)
+var_D <- D*(1-D)
+
+cov_AB <- -A*B
+cov_AC <- -A*C
+cov_AD <- -A*D
+cov_BC <- -B*C
+cov_BD <- -B*D
+cov_CD <- -C*D
+
+pop_asy_var_phi <- var_A*DphiA^2 + var_B*DphiB^2 + var_C*DphiC^2 + var_D*DphiD^2 +
+  2*cov_AB*DphiA*DphiB + 2*cov_AC*DphiA*DphiC + 2*cov_AD*DphiA*DphiD +
+  2*cov_BC*DphiB*DphiC + 2*cov_BD*DphiB*DphiD + 2*cov_CD*DphiC*DphiD
+
+# Power function to compare phi with log(odds Ratio)
+
+power_phi_odds <- function(n, n.size){
+  # rmultinom first argument: n = number of samples to draw
+  phi <- NULL
+  data1 <- NULL
+  for (i in 1:n) {
+    # rmultinom second argument: n.size = total count within one sample
+    smpl <- rmultinom(n, n.size, prob= c(A,B,C,D))
+    # define cells as samples probabilities
+    a <- smpl[1]/n.size; b <- smpl[2]/n.size;
+    c <- smpl[3]/n.size; d <- smpl[4]/n.size
+    # define marginals
+    row_1 <- a + b;row_2 <- c + d
+    col_1 <- a + c;col_2 <- b + d
+      # Phi
+      phi <- ((a*d)-(b*c))/sqrt(row_1*row_2*col_1*col_2)
+      # assemble asymptotic variance for phi
+      G <- (a+b)*(c+d)*(a+c)*(b+d)
+      DphiA <- d*G^(-0.5) - 0.5*pop_phi*G^(-1)*(c+d)*(b+d)*(2*a+b+c)
+      DphiD <-a*G^(-0.5) - 0.5*pop_phi*G^(-1)*(a+b)*(a+c)*(2*d+b+c)
+      DphiB <- -c*G^(-0.5) - 0.5*pop_phi*G^(-1)*(a+c)*(c+d)*(2*b+a+d)
+      DphiC <- -b*G^(-0.5) - 0.5*pop_phi*G^(-1)*(a+b)*(b+d)*(2*c+a+d)
+      
+      var_a <- a*(1-a)
+      var_b<- b*(1-b)
+      var_c <- c*(1-c)
+      var_d <- d*(1-d)
+      
+      cov_ab <- -a*b
+      cov_ac <- -a*c
+      cov_ad <- -a*d
+      cov_bc <- -b*c
+      cov_bd <- -b*d
+      cov_cd <- -c*d
+      
+      asy_var_phi <- var_a*DphiA^2 + var_b*DphiB^2 + var_c*DphiC^2 + var_d*DphiD^2 +
+        2*cov_ab*DphiA*DphiB + 2*cov_ac*DphiA*DphiC + 2*cov_ad*DphiA*DphiD +
+        2*cov_bc*DphiB*DphiC + 2*cov_bd*DphiB*DphiD + 2*cov_cd*DphiC*DphiD
+      
+      odds_ratio <- a*(1-a-b-c)/(b*c)
+      ln_odds_ratio <- log(odds_ratio)
+      asy_var_or <- (1/a + 1/b + 1/c + 1/(1 - a - b - c))
+      
+      
+      z_phi_wald <- phi/sqrt(asy_var_phi/n.size)
+      z_ln_odds_wald <- ln_odds_ratio/sqrt(asy_var_or/n.size)
+      
+      count_phi <- ifelse(abs(z_phi_wald)>1.96,1,0)
+      count_ln_odds_ratio <-ifelse(abs(z_ln_odds_wald)>1.96,1,0)
+      
+      df <- c(a, b, c, phi, asy_var_phi, odds_ratio,ln_odds_ratio, asy_var_or,count_phi,count_ln_odds_ratio)
+      cell_counts_data <- rbind(df,cell_counts_data)
+  }  
+  colnames(cell_counts_data) <-c('a', 'b', 'c', 'phi', 'asy_var_phi', 'odds_ratio','ln_odds_ratio', 
+                                 'asy_var_or','count_phi','count_ln_odds_ratio')
+  return(cell_counts_data)
+}
+
+t_100_100 <- power_phi_odds(100,100)
+t_100_100 <- as.data.frame(t_100_100)
+head(t_100_100)
+sum(t_100_100$count_phi)
+sum(t_100_100$count_ln_odds_ratio)
+
+t_1000_100 <- power_phi_odds(1000,100)
+t_1000_100 <- as.data.frame(t_1000_100)
+head(t_1000_100)
+
+sum(t_1000_100$count_phi)
+sum(t_1000_100$count_ln_odds_ratio)
+
+t_10000_100 <- power_phi_odds(10000,100)
+t_10000_100 <- as.data.frame(t_10000_100)
+head(t_10000_100)
+
+sum(t_10000_100$count_phi)
+sum(t_10000_100$count_ln_odds_ratio)
