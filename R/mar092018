@@ -1,0 +1,45 @@
+-B*G^(-0.5) - 0.5*pop_phi*G^(-1)*(A+B)*(B+D)*(2*C+A+D)
+
+var_A <- A*(1-A)
+var_B<- B*(1-B)
+var_C <- C*(1-C)
+var_D <- D*(1-D)
+
+cov_AB <- -A*B
+cov_AC <- -A*C
+cov_AD <- -A*D
+cov_BC <- -B*C
+cov_BD <- -B*D
+cov_CD <- -C*D# 
+library(gtools)
+
+alt_dist <- function(x){
+  alt_joint_distrb <- x
+  # x <- rdirichlet(1,c(1,1,1,1))
+
+
+# alt_joint_distrb <- c(0.2166556, 0.4410802, 0.2019513, 0.1403129)
+#  construct prob( |z| >= 1.96 | when the alternative hypothesis is true)
+# Capital letters are reserved for the true alternative distribtuion
+A <- alt_joint_distrb[1];B <- alt_joint_distrb[2]
+C <- alt_joint_distrb[3];D <- alt_joint_distrb[4]
+
+row_1 <- A + B;row_2 <- C + D
+col_1 <- A + C;col_2 <- B + D
+
+pop_phi <- ((A*D)-(B*C))/sqrt(row_1*row_2*col_1*col_2)
+
+G <- (A+B)*(C+D)*(A+C)*(B+D)
+DphiA <- D*G^(-0.5) - 0.5*pop_phi*G^(-1)*(C+D)*(B+D)*(2*A+B+C)
+DphiD <-A*G^(-0.5) - 0.5*pop_phi*G^(-1)*(A+B)*(A+C)*(2*D+B+C)
+DphiB <- -C*G^(-0.5) - 0.5*pop_phi*G^(-1)*(A+C)*(C+D)*(2*B+A+D)
+DphiC <- 
+
+pop_asy_var_phi <- var_A*DphiA^2 + var_B*DphiB^2 + var_C*DphiC^2 + var_D*DphiD^2 +
+  2*cov_AB*DphiA*DphiB + 2*cov_AC*DphiA*DphiC + 2*cov_AD*DphiA*DphiD +
+  2*cov_BC*DphiB*DphiC + 2*cov_BD*DphiB*DphiD + 2*cov_CD*DphiC*DphiD
+output <- list(A=A,B=B,C=C,D=D,pop_var=pop_asy_var_phi)
+{
+return(output)
+}
+y <-alt_dist(rdirichlet(1,c(1,1,1,1)))
